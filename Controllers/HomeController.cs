@@ -10,7 +10,6 @@ namespace Vega.Controllers
     {
         public IActionResult Index()
         {
-            System.Console.WriteLine("test");
             return View();
         }
 
