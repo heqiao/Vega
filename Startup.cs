@@ -32,9 +32,7 @@ namespace Vega
         {
             // Add framework services.
             services.AddMvc();
-            //services.AddDbContext<VegaDbContext>(options => options.UseSqlServer(@"Default"));
-            //services.AddDbContext<VegaDbContext>(options => options.UseSqlServer(@"Server=(local)\\mssqllocaldb;Database=vega;Trusted_Connection=True;"));
-            services.AddDbContext<VegaDbContext>(options => options.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;Database=vega;Integrated Security=True;"));
+            services.AddDbContext<VegaDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:Default"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
