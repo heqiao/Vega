@@ -12,10 +12,15 @@ namespace Vega.Data
         public DbSet<Feature> Features { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder){
-            // modelBuilder.Entity<Make>().ToTable("Makes");
-            // modelBuilder.Entity<Model>().ToTable("Models");
-            // modelBuilder.Entity<Feature>().ToTable("Features");
+            modelBuilder.Entity<Make>().ToTable("Makes");
+            modelBuilder.Entity<Model>().ToTable("Models");
+            modelBuilder.Entity<Feature>().ToTable("Features");
             
+            modelBuilder.Entity<Make>().Property(m => m.Name).IsRequired().HasMaxLength(255);
+            modelBuilder.Entity<Model>().Property(m => m.Name).IsRequired().HasMaxLength(255);
+            modelBuilder.Entity<Feature>().Property(m => m.Name).IsRequired().HasMaxLength(255);
+
+            // Set up M-M relationship
             modelBuilder.Entity<ModelFeature>()
             .HasKey(t => new { t.ModelId, t.FeatureId});
 
