@@ -8,15 +8,28 @@ namespace Vega.Data
         public VegaDbContext(DbContextOptions<VegaDbContext> options):base(options) { }
         
         public DbSet<Make> Makes { get; set; }
-        // public DbSet<Model> Models { get; set; }
-        // public DbSet<Feature> Features { get; set; }
+        public DbSet<Model> Models { get; set; }
+        public DbSet<Feature> Features { get; set; }
 
-        // protected override void OnModelCreating(ModelBuilder modelBuilder){
-        //     modelBuilder.Entity<Make>().ToTable("Make");
-        //     modelBuilder.Entity<Model>().ToTable("Model");
-        //     modelBuilder.Entity<Feature>().ToTable("Feature");
-        // }
-        
+        protected override void OnModelCreating(ModelBuilder modelBuilder){
+            // modelBuilder.Entity<Make>().ToTable("Makes");
+            // modelBuilder.Entity<Model>().ToTable("Models");
+            // modelBuilder.Entity<Feature>().ToTable("Features");
+            
+            modelBuilder.Entity<ModelFeature>()
+            .HasKey(t => new { t.ModelId, t.FeatureId});
+
+            modelBuilder.Entity<ModelFeature>()
+            .HasOne(mf => mf.Model)
+            .WithMany(m => m.ModelFeatures)
+            .HasForeignKey(mf => mf.ModelId);
+
+            modelBuilder.Entity<ModelFeature>()
+            .HasOne(mf => mf.Feature)
+            .WithMany(f => f.ModelFeatures)
+            .HasForeignKey(mf => mf.FeatureId);
+            
+        }        
     }    
 }
 

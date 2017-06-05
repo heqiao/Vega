@@ -8,9 +8,10 @@ using Vega.Data;
 namespace Vega.Migrations
 {
     [DbContext(typeof(VegaDbContext))]
-    partial class VegaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170605171128_AddedFeaturesTable")]
+    partial class AddedFeaturesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
@@ -21,11 +22,15 @@ namespace Vega.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("ModelId");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ModelId");
 
                     b.ToTable("Features");
                 });
@@ -62,17 +67,11 @@ namespace Vega.Migrations
                     b.ToTable("Models");
                 });
 
-            modelBuilder.Entity("Vega.Entities.ModelFeature", b =>
+            modelBuilder.Entity("Vega.Entities.Feature", b =>
                 {
-                    b.Property<int>("ModelId");
-
-                    b.Property<int>("FeatureId");
-
-                    b.HasKey("ModelId", "FeatureId");
-
-                    b.HasIndex("FeatureId");
-
-                    b.ToTable("ModelFeature");
+                    b.HasOne("Vega.Entities.Model")
+                        .WithMany("Features")
+                        .HasForeignKey("ModelId");
                 });
 
             modelBuilder.Entity("Vega.Entities.Model", b =>
@@ -80,19 +79,6 @@ namespace Vega.Migrations
                     b.HasOne("Vega.Entities.Make", "Make")
                         .WithMany("Models")
                         .HasForeignKey("MakeId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Vega.Entities.ModelFeature", b =>
-                {
-                    b.HasOne("Vega.Entities.Feature", "Feature")
-                        .WithMany("ModelFeatures")
-                        .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Vega.Entities.Model", "Model")
-                        .WithMany("ModelFeatures")
-                        .HasForeignKey("ModelId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
         }
