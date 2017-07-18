@@ -21,6 +21,19 @@ namespace Vega.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateVehicle([FromBody]VehicleResource vehicleResource)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            
+            // Complex business validation goes here
+            // if (true)
+            // {
+            //     ModelState.AddModelError("...", "error");
+            //     return BadRequest(ModelState);
+            // }
+
             var vehicle = mapper.Map<VehicleResource, Vehicle>(vehicleResource);
             vehicle.LastUpdate = DateTime.Now;
             context.Vehicles.Add(vehicle);
