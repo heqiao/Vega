@@ -1,31 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
+using Vega.Controllers.Resources;
 
-namespace Vega.Controllers.Resources
+namespace vega.Controllers.Resources
 {
-    public class ContactResource {
-        [Required]
-        [StringLength(255)]
-        public string Name { get; set; }
-        [StringLength(255)]
-        public string Email { get; set; }
-        [Required]
-        [StringLength(255)]
-        public string Phone { get; set; }
-    }
     public class VehicleResource
     {
-        public int ModelId { get; set; }
+        public int Id { get; set; }
+        public ModelResource Model { get; set; }
         public bool IsRegistered { get; set; }
-        [Required]
         public ContactResource Contact { get; set; }
-        public ICollection<int> Features { get; set; }
+        public DateTime LastUpdate { get; set; }
+
+        public ICollection<FeatureResource> Features { get; set; }
 
         public VehicleResource()
         {
-            Features = new Collection<int>();
+            Features = new Collection<FeatureResource>();
         }
     }
 }

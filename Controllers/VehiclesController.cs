@@ -6,6 +6,7 @@ using Vega.Data;
 using System.Threading.Tasks;
 using System;
 using Microsoft.EntityFrameworkCore;
+using vega.Controllers.Resources;
 
 namespace Vega.Controllers
 {
@@ -78,7 +79,10 @@ namespace Vega.Controllers
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetVehicle(int id) {
-            var vehicle = await context.Vehicles.Include(v => v.Features).SingleOrDefaultAsync(v => v.Id == id);
+            var vehicle = await context.Vehicles
+            .Include(v => v.Features)
+                .ThenInclude(vf => vf.Feature)
+            .SingleOrDefaultAsync(v => v.Id == id);
             if (vehicle == null)
                 return NotFound();
 

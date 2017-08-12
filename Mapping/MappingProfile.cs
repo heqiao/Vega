@@ -3,6 +3,7 @@ using Vega.Controllers.Resources;
 using Vega.Entities;
 using System.Linq;
 using System.Collections.Generic;
+using vega.Controllers.Resources;
 
 namespace Vega.Mapping
 {
@@ -14,12 +15,14 @@ namespace Vega.Mapping
             CreateMap<Make, MakeResource>();
             CreateMap<Model, ModelResource>();
             CreateMap<Feature, FeatureResource>();
-            CreateMap<Vehicle, VehicleResource>()
+            CreateMap<Vehicle, SaveVehicleResource>()
                 .ForMember(vr => vr.Contact, opt => opt.MapFrom(v => new ContactResource { Name = v.ContactName, Email = v.ContactEmail, Phone = v.ContactPhone}))
                 .ForMember(vr => vr.Features, opt => opt.MapFrom(v => v.Features.Select(f => f.FeatureId)));
-
+            CreateMap<Vehicle, VehicleResource>()
+                .ForMember(vr => vr.Contact, opt => opt.MapFrom(v => new ContactResource { Name = v.ContactName, Email = v.ContactEmail, Phone = v.ContactPhone}))
+                .ForMember(vr => vr.Features, opt => opt.MapFrom(v => v.Features.Select(f => new FeatureResource {Id = f.Feature.Id, Name = f.Feature.Name})));
             // API Resource to Domain
-            CreateMap<VehicleResource, Vehicle>()
+            CreateMap<SaveVehicleResource, Vehicle>()
                 .ForMember(v => v.Id, opt => opt.Ignore())
                 .ForMember(v => v.ContactName, opt => opt.MapFrom(vr => vr.Contact.Name))
                 .ForMember(v => v.ContactEmail, opt => opt.MapFrom(vr => vr.Contact.Email))
