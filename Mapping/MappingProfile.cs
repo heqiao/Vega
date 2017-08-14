@@ -1,9 +1,8 @@
 using AutoMapper;
 using Vega.Controllers.Resources;
-using Vega.Entities;
+using Vega.Core.Entities;
 using System.Linq;
 using System.Collections.Generic;
-using vega.Controllers.Resources;
 
 namespace Vega.Mapping
 {

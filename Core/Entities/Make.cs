@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Vega.Entities
+namespace Vega.Core.Entities
 {
     public class Make : BaseEntity
     {

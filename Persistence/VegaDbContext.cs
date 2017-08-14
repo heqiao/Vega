@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Vega.Entities;
+using Vega.Core.Entities;
 
 namespace Vega.Persistence
 {

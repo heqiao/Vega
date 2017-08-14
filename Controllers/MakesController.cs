@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Vega.Entities;
+using Vega.Core.Entities;
 using Vega.Persistence;
 using AutoMapper;
 using Vega.Controllers.Resources;

@@ -1,12 +1,11 @@
 using AutoMapper;
 using Vega.Controllers.Resources;
 using Microsoft.AspNetCore.Mvc;
-using Vega.Entities;
-using Vega.Persistence;
+using Vega.Core.Entities;
+using Vega.Core;
 using System.Threading.Tasks;
 using System;
 using Microsoft.EntityFrameworkCore;
-using vega.Controllers.Resources;
 
 namespace Vega.Controllers
 {
@@ -14,13 +13,15 @@ namespace Vega.Controllers
     public class VehiclesController : Controller
     {
         private readonly IMapper mapper;
-        private readonly VegaDbContext context;
-        public VehiclesController(IMapper mapper, VegaDbContext context)
+        private readonly IVehicleRepository repository;
+        private readonly IUnitOfWork uow;
+        public VehiclesController(IMapper mapper, IVehicleRepository repository, IUnitOfWork uow)
         {
-            this.context = context;
+            this.uow = uow;
+            this.repository = repository;
             this.mapper = mapper;
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> CreateVehicle([FromBody]SaveVehicleResource vehicleResource)
         {
@@ -36,16 +37,11 @@ namespace Vega.Controllers
 
             var vehicle = mapper.Map<SaveVehicleResource, Vehicle>(vehicleResource);
             vehicle.LastUpdate = DateTime.Now;
-            context.Vehicles.Add(vehicle);
-            await context.SaveChangesAsync();
+            repository.Add(vehicle);
+            await uow.CompleteAsync();
 
             // eager load
-            vehicle = await context.Vehicles
-                .Include(v => v.Features)
-                    .ThenInclude(vf => vf.Feature)
-                .Include(v => v.Model)
-                    .ThenInclude(m => m.Make)
-                .SingleOrDefaultAsync(v => v.Id == vehicle.Id);
+            vehicle = await repository.GetVehicle(vehicle.Id);
 
             var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
             return Ok(result);
@@ -57,20 +53,17 @@ namespace Vega.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var vehicle = await context.Vehicles
-                .Include(v => v.Features)
-                    .ThenInclude(vf => vf.Feature)
-                .Include(v => v.Model)
-                    .ThenInclude(m => m.Make)
-                .SingleOrDefaultAsync(v => v.Id == id);
+            var vehicle = await repository.GetVehicle(id);
 
             if (vehicle == null)
                 return NotFound();
 
             mapper.Map<SaveVehicleResource, Vehicle>(vehicleResource, vehicle);
             vehicle.LastUpdate = DateTime.Now;
-            
-            await context.SaveChangesAsync();
+
+            await uow.CompleteAsync();
+            vehicle = await repository.GetVehicle(vehicle.Id);
+
             var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
             return Ok(result);
         }
@@ -81,24 +74,20 @@ namespace Vega.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var vehicle = await context.Vehicles.FindAsync(id);
+            var vehicle = await repository.GetVehicle(id, includeRelated: false);
             if (vehicle == null)
                 return NotFound();
 
-            context.Remove(vehicle);
-            await context.SaveChangesAsync();
-            
+            repository.Remove(vehicle);
+            await uow.CompleteAsync();
+
             return Ok(id);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetVehicle(int id) {
-            var vehicle = await context.Vehicles
-                .Include(v => v.Features)
-                    .ThenInclude(vf => vf.Feature)
-                .Include(v => v.Model)
-                    .ThenInclude(m => m.Make)
-                .SingleOrDefaultAsync(v => v.Id == id);
+        public async Task<IActionResult> GetVehicle(int id)
+        {
+            var vehicle = await repository.GetVehicle(id);
 
             if (vehicle == null)
                 return NotFound();

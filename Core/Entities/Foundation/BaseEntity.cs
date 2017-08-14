@@ -1,4 +1,4 @@
-namespace Vega.Entities
+namespace Vega.Core.Entities
 {
     public abstract class BaseEntity : IEntity
     {

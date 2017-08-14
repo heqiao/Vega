@@ -1,4 +1,4 @@
-namespace Vega.Entities
+namespace Vega.Core.Entities
 {
     public class ModelFeature
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using Vega.Entities;
+using Vega.Core.Entities;
 
 namespace Vega.Controllers.Resources
 {
